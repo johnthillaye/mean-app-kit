@@ -47,6 +47,9 @@ gulp.task('html', ['inject', 'partials'], function () {
     .pipe($.uglify({ preserveComments: $.uglifySaveLicense })).on('error', conf.errorHandler('Uglify'))
     .pipe(jsFilter.restore())
     .pipe(cssFilter)
+    .pipe($.uncss({
+      html: [path.join(conf.paths.src, '/*.html')]
+    }))
     .pipe($.csso())
     .pipe(cssFilter.restore())
     .pipe(assets.restore())

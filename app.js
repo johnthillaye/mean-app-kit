@@ -3,10 +3,9 @@
  */
 var express = require('express'),
     favicon = require('serve-favicon'),
-    mongoose = require('mongoose'),
     bodyParser = require('body-parser'),
-    models = require('./models'),
-    routescan = require('express-routescan'),
+    db = require('./db.js'),
+    scanRoute = require('scan-route'),
     http = require('http'),
     path = require('path'),
     config = require('./config.js');
@@ -36,22 +35,10 @@ if (app.get('env') === 'development') {
 }
 
 //Connect to db
-var connection = mongoose.createConnection(config.dbUrl);
-connection.on('error', console.error.bind(console, 'connection error:'));
-connection.once('open', function () {
-  console.info('connected to database')
-});
-
-// Pipe Model in DB object
-app.use(function( req, res, next ){
-  req.db = {
-    User: connection.model('User', models.User, 'users')
-  }
-  next();
-})
+var connection = db(app);
 
 // Set up the routes.
-routescan(app);
+scanRoute(app);
 
 // Serve the index.html for root path.
 app.get('/', function(req, res) {    
